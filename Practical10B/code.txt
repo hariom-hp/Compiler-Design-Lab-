@@ -1,0 +1,26 @@
+%{
+int tags=0;
+%}
+
+%%
+"<"[^>]*> { tags++; printf("%s\n", yytext); }
+.|\n { }
+%%
+
+int yywrap(){ return 1; }
+
+int main(){
+    FILE *f;
+    char file[50];
+
+    printf("Enter file name: ");
+    scanf("%s",file);
+
+    f=fopen(file,"r");
+    yyin=f;
+
+    yylex();
+
+    printf("\nTotal tags: %d\n",tags);
+    return 0;
+}
