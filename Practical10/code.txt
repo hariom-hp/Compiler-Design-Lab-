@@ -1,0 +1,39 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int number_count = 0;
+%}
+
+%%
+[0-9]+(\.[0-9]+)?   {
+                        number_count++;
+                        printf("Number %d: %s\n", number_count, yytext);
+                    }
+[a-zA-Z]+           { /* ignore words */ }
+[ \t\n]+            { /* ignore whitespace */ }
+.                   { /* ignore other characters */ }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *file = fopen(argv[1], "r");
+    if (!file) {
+        fprintf(stderr, "Error: Cannot open file %s\n", argv[1]);
+        return 1;
+    }
+
+    yyin = file;
+    yylex();
+
+    printf("\nTotal numbers found: %d\n", number_count);
+    fclose(file);
+    return 0;
+}

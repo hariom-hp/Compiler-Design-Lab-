@@ -1,0 +1,30 @@
+%{
+#include <stdio.h>
+int vowel_count     = 0;
+int consonant_count = 0;
+%}
+
+%%
+[aeiouAEIOU]                        { vowel_count++; }
+[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z]   { consonant_count++; }
+[^a-zA-Z\n]                         { /* ignore digits, spaces, symbols */ }
+\n                                  { /* ignore newline */ }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    char input[200];
+    printf("Enter a string: ");
+    fgets(input, sizeof(input), stdin);
+
+    // Feed input into lex via a buffer
+    yy_scan_string(input);
+    yylex();
+
+    printf("Number of vowels     : %d\n", vowel_count);
+    printf("Number of consonants : %d\n", consonant_count);
+    return 0;
+}
